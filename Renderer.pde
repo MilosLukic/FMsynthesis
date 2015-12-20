@@ -12,4 +12,8 @@ class Renderer{
     }
   
   }
+  
+  public void drawOut(){
+    
+  }
 }

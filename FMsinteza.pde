@@ -1,6 +1,6 @@
 public static int WIDTH = 1200;
 public static int HEIGHT = 766;
-public static int COLUMNS = 10;
+public static int COLUMNS = 6;
 public static int ROWS = 7;
 Renderer renderer;
 
@@ -14,6 +14,7 @@ void setup(){
 
 void draw(){
   renderer.drawGrid();
+  renderer.drawOut();
 }
 
 void initializeCells(){
