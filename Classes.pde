@@ -60,8 +60,15 @@ class Cell{
     float distanceIn = sqrt((this.pointInX - mouseX)*(this.pointInX - mouseX) + (this.pointInY - mouseY)*(this.pointInY - mouseY));
     float distanceOut = sqrt((this.pointOutX - mouseX)*(this.pointOutX - mouseX) + (this.pointOutY - mouseY)*(this.pointOutY - mouseY));
     
-    if( distanceIn < 5){
-    }else if (distanceOut < 5){
+    if( distanceIn < connectorSize){
+      if (activeOut != null && activeOut != this.oscillator){
+        this.oscillator.setOutOscillator(activeIn);
+      }
+      
+    }else if (distanceOut < connectorSize){
+      if (activeIn != null && activeIn != this.oscillator){
+        activeOut.setOutOscillator(this.oscillator);
+      }
     }
   }
   
@@ -121,5 +128,9 @@ class Oscillator{
    
    public void setType(){
     this.type = type;
+   }
+   
+   public void setOutOscillator(Oscillator outOscillator){
+     this.outOscillator = outOscillator;
    }
 }
