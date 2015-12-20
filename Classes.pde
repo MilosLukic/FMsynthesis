@@ -1,9 +1,17 @@
 class Cell{
   boolean empty;
+  int leftTopX;
+  int leftTopY;
+  int segmentX;
+  int segmentY;
   Oscillator Oscillator;
   
-  public Cell(boolean empty){
+  public Cell(boolean empty, int leftTopX, int leftTopY, int segmentX, int segmentY ){
     this.empty = empty;
+    this.leftTopX = leftTopX;
+    this.leftTopY = leftTopY;
+    this.segmentX = segmentX;
+    this.segmentY = segmentY;
   }
   
   public void initOscillator(){
@@ -28,6 +36,12 @@ class Cell{
   
   public void setEmpty(boolean empty){
     this.empty = empty;
+  }
+  
+  public void drawCell(){
+    fill(255);
+    stroke(0);
+    rect(leftTopX, leftTopY, segmentX, segmentY);
   }
 }
 
