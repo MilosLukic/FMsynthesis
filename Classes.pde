@@ -39,6 +39,14 @@ class Cell{
     this.empty = empty;
   }
   
+  public boolean isEmpty(){
+    return this.empty;
+  }
+  
+  public void manageInput(){
+    
+  }
+  
   public void drawCell(){
     fill(255);
     stroke(0);

@@ -34,7 +34,6 @@ void initializeCells(){
     leftTopX = 0;
     for (int j = 0; j<cells[i].length; j++){
       cells[i][j] = new Cell(true, leftTopX, leftTopY, xSegment, ySegment);
-      cells[i][j].initOscillator();
       leftTopX = leftTopX + xSegment;
     }
     leftTopY += ySegment;

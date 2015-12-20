@@ -28,4 +28,12 @@ class Renderer{
     textAlign(CENTER);
     text("FM Synthesis Board", width/2, ySegment/2);
   }
+  
+  public void drawHelp(){
+    fill(0);
+    textSize(25);
+    textAlign(CENTER);
+    text("FM Synthesis Board", width/2, ySegment/2);
+  
+  }
 }
