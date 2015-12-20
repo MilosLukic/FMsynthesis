@@ -21,6 +21,7 @@ void draw(){
   renderer.drawCells();
   renderer.drawOut();
   renderer.drawTitle();
+  renderer.drawHelp();
 }
 
 void initializeCells(){

@@ -31,9 +31,9 @@ class Renderer{
   
   public void drawHelp(){
     fill(0);
-    textSize(25);
+    textSize(20);
     textAlign(CENTER);
-    text("FM Synthesis Board", width/2, ySegment/2);
+    text("Help", width-100, ySegment/2);
   
   }
 }

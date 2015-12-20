@@ -52,7 +52,16 @@ class Cell{
   }
   
   public void manageInput(){
+    if (this.empty){
+      return;
+    }
     
+    float distanceIn = sqrt((this.pointInX - mouseX)*(this.pointInX - mouseX) + (this.pointInY - mouseY)*(this.pointInY - mouseY));
+    float distanceOut = sqrt((this.pointOutX - mouseX)*(this.pointOutX - mouseX) + (this.pointOutY - mouseY)*(this.pointOutY - mouseY));
+    
+    if( distanceIn < 5){
+    }else if (distanceOut < 5){
+    }
   }
   
   public void drawCell(){
