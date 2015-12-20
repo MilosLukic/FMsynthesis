@@ -10,6 +10,7 @@ class Cell{
   float pointInY;
   float pointOutX;
   float pointOutY;
+  int connectorSize = 5;
   
   public Cell(boolean empty, int leftTopX, int leftTopY, int segmentX, int segmentY ){
     this.empty = empty;
@@ -61,10 +62,13 @@ class Cell{
     stroke(0);
     rect(leftTopX, leftTopY, segmentX*oscillatorSizeRelative, segmentY, 20);
     fill(255,5,5);
-    ellipse(this.pointInX, this.pointInY, 5, 5);
-    ellipse(this.pointOutX, this.pointOutY, 5, 5);
+    ellipse(this.pointInX, this.pointInY, connectorSize, connectorSize);
+    ellipse(this.pointOutX, this.pointOutY, connectorSize, connectorSize);
     
-    text(this.oscillator.frequency, leftTopY, 30); 
+    text("f", leftTopX+segmentX*0.1, leftTopY+segmentY*0.3); 
+    text(this.oscillator.frequency, leftTopX+segmentX*0.15, leftTopY+segmentY*0.3); 
+    text("A", leftTopX+segmentX*0.1, leftTopY+segmentY*0.7);
+    text(this.oscillator.amplitude, leftTopX+segmentX*0.15, leftTopY+segmentY*0.7); 
     
   }
 }
