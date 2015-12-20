@@ -10,6 +10,9 @@ public int ySegment;
 Renderer renderer;
 
 Cell[][] cells = new Cell[ROWS][COLUMNS];
+Oscillator activeOut = null;
+Oscillator activeIn = null;
+
 
 void setup(){
   size(1200, 766);

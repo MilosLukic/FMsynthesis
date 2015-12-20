@@ -15,7 +15,6 @@ class Renderer{
     float y = ySegment * HEADER_HEIGHT + ySegment * (ROWS)/2;
     ellipse(x, y, 30,30);
     noFill();
-    bezier(x-200, y-200, x, y - 200, x-200, y, x, y);
     fill(255);
     textSize(12);
     text("Out", x-25, y); 

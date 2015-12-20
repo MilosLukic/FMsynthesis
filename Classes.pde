@@ -25,7 +25,7 @@ class Cell{
   }
   
   public void initOscillator(){
-    this.oscillator = new Oscillator();
+    this.oscillator = new Oscillator(this);
     this.empty = false;
   }
   
@@ -60,8 +60,27 @@ class Cell{
     float distanceIn = sqrt((this.pointInX - mouseX)*(this.pointInX - mouseX) + (this.pointInY - mouseY)*(this.pointInY - mouseY));
     float distanceOut = sqrt((this.pointOutX - mouseX)*(this.pointOutX - mouseX) + (this.pointOutY - mouseY)*(this.pointOutY - mouseY));
     
-    if( distanceIn < 5){
-    }else if (distanceOut < 5){
+    if( distanceIn < connectorSize){
+      System.out.println("in");
+      if (activeOut != null && activeOut != this.oscillator){
+        this.oscillator.setOutOscillator(activeOut);
+        activeIn = null;
+        activeOut = null;
+        System.out.println("connected");
+      }else if(activeIn == null){
+        activeIn = this.oscillator;
+      }
+      
+    }else if (distanceOut < connectorSize){
+      System.out.println("out");
+      if (activeIn != null && activeIn != this.oscillator){
+        activeIn.setOutOscillator(this.oscillator);
+            System.out.println("connected");
+        activeIn = null;
+        activeOut = null;
+      }else if(activeOut == null){
+        activeOut = this.oscillator;
+      }
     }
   }
   
@@ -71,6 +90,17 @@ class Cell{
     rect(leftTopX, leftTopY, segmentX, segmentY);
     if (!this.empty)
       drawOscillator();
+    drawConnection();
+  }
+  
+  public void drawConnection(){
+    noFill();
+    if (this.oscillator == null || this.oscillator.outOscillator == null)
+      return;
+    float outX = this.oscillator.outOscillator.container.pointOutX;
+    float outY = this.oscillator.outOscillator.container.pointOutY;
+    bezier(pointInX, pointInY, outX, pointInY,  pointInX, outY, outX, outY);
+          System.out.println("wat");
   }
   
   public void drawOscillator(){
@@ -97,9 +127,12 @@ class Oscillator{
   float amplitude = 1.0f;
   String type = "SINE";
   Oscillator outOscillator = null;
-  float pointInX, pointInY, pointOutX, pointOutY;
+  float pointOutX, pointOutY;
+  Cell container = null;
   
-
+  public Oscillator(Cell container){
+    this.container = container;
+  }
   
   public int getFrequency(){
     return this.frequency;
@@ -122,5 +155,9 @@ class Oscillator{
    
    public void setType(){
     this.type = type;
+   }
+   
+   public void setOutOscillator(Oscillator outOscillator){
+     this.outOscillator = outOscillator;
    }
 }
