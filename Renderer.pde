@@ -1,10 +1,8 @@
 class Renderer{
   
   public void drawCells(){
-    System.out.println(cells.length+ " " + cells[0].length);
     for (Cell[] row : cells){
       for (Cell c : row){
-        
         c.drawCell();
       }
     }
@@ -13,6 +11,21 @@ class Renderer{
   public void drawOut(){
     ellipseMode(RADIUS);
     fill(0);
-    //ellipse(width, 
+    float x = width;
+    float y = ySegment * HEADER_HEIGHT + ySegment * (ROWS)/2;
+    ellipse(x, y, 30,30);
+    noFill();
+    bezier(x-200, y-200, x, y - 200, x-200, y, x, y);
+    fill(255);
+    textSize(12);
+    text("Out", x-25, y); 
+
+  }
+  
+  public void drawTitle(){
+    fill(0);
+    textSize(25);
+    textAlign(CENTER);
+    text("FM Synthesis Board", width/2, ySegment/2);
   }
 }

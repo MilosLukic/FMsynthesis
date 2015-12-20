@@ -4,6 +4,9 @@ public static int COLUMNS = 6;
 public static int ROWS = 7;
 public int HEADER_HEIGHT = 2;
 public int FOOTER_HEIGHT = 1;
+public int xSegment;
+public int ySegment;
+
 Renderer renderer;
 
 Cell[][] cells = new Cell[ROWS][COLUMNS];
@@ -17,11 +20,12 @@ void setup(){
 void draw(){
   renderer.drawCells();
   renderer.drawOut();
+  renderer.drawTitle();
 }
 
 void initializeCells(){
-  int ySegment = (int) Math.round(HEIGHT/(ROWS+HEADER_HEIGHT + FOOTER_HEIGHT));
-  int xSegment = (int) Math.round(WIDTH/COLUMNS);
+  ySegment = (int) Math.round(HEIGHT/(ROWS+HEADER_HEIGHT + FOOTER_HEIGHT));
+  xSegment = (int) Math.round(WIDTH/COLUMNS);
     
   int leftTopY = HEADER_HEIGHT * ySegment;
   int leftTopX = 0;
