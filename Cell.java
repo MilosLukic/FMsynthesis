@@ -1,27 +1,27 @@
 class Cell{
   boolean empty;
-  Oscilator oscilator;
+  Oscillator Oscillator;
   
   public Cell(boolean empty){
     this.empty = empty;
   }
   
-  public void initOscilator(){
-    this.oscilator = new Oscilator();
+  public void initOscillator(){
+    this.Oscillator = new Oscillator();
     this.empty = false;
   }
   
-  public void removeOscilator(){
-    this.oscilator = null;
+  public void removeOscillator(){
+    this.Oscillator = null;
     this.empty = true;
   }
   
-  public void moveOscilatorTo(Cell target){
+  public void moveOscillatorTo(Cell target){
     if (this.empty){
       return;
     }
-    target.oscilator = this.oscilator;
-    this.oscilator = null;
+    target.Oscillator = this.Oscillator;
+    this.Oscillator = null;
     target.setEmpty(false);
     this.setEmpty(true);
   }
@@ -31,11 +31,12 @@ class Cell{
   }
 }
 
-class Oscilator{
+class Oscillator{
   boolean active = true;
   int frequency = 440;
   float amplitude = 1.0f;
   String type = "SINE";
+  Oscillator outOscillator = null;
   
   public int getFrequency(){
     return this.frequency;
