@@ -75,6 +75,7 @@ class Cell{
   
   public void drawOscillator(){
     
+    textSize(10);
     fill(200);
     stroke(0);
     rect(leftTopX, leftTopY, segmentX*oscillatorSizeRelative, segmentY, 20);
@@ -83,9 +84,9 @@ class Cell{
     ellipse(this.pointOutX, this.pointOutY, connectorSize, connectorSize);
     
     text("f", leftTopX+segmentX*0.1, leftTopY+segmentY*0.3); 
-    text(this.oscillator.frequency, leftTopX+segmentX*0.15, leftTopY+segmentY*0.3); 
+    text(this.oscillator.frequency, leftTopX+segmentX*0.2, leftTopY+segmentY*0.3); 
     text("A", leftTopX+segmentX*0.1, leftTopY+segmentY*0.7);
-    text(this.oscillator.amplitude, leftTopX+segmentX*0.15, leftTopY+segmentY*0.7); 
+    text(this.oscillator.amplitude, leftTopX+segmentX*0.2, leftTopY+segmentY*0.7); 
     
   }
 }
