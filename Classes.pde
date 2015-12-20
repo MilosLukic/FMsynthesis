@@ -6,6 +6,10 @@ class Cell{
   int segmentY;
   Oscillator oscillator;
   float oscillatorSizeRelative = 0.6;
+  float pointInX;
+  float pointInY;
+  float pointOutX;
+  float pointOutY;
   
   public Cell(boolean empty, int leftTopX, int leftTopY, int segmentX, int segmentY ){
     this.empty = empty;
@@ -13,10 +17,14 @@ class Cell{
     this.leftTopY = leftTopY;
     this.segmentX = segmentX;
     this.segmentY = segmentY;
+    pointInX = leftTopX;
+    pointInY = leftTopY + segmentY/2;
+    pointOutX = leftTopX + segmentX * oscillatorSizeRelative;
+    pointOutY = leftTopY + segmentY/2;
   }
   
   public void initOscillator(){
-    this.oscillator = new Oscillator(leftTopX, leftTopY + segmentY/2, leftTopX + segmentX * oscillatorSizeRelative, leftTopY + segmentY/2);
+    this.oscillator = new Oscillator();
     this.empty = false;
   }
   
@@ -53,8 +61,11 @@ class Cell{
     stroke(0);
     rect(leftTopX, leftTopY, segmentX*oscillatorSizeRelative, segmentY, 20);
     fill(255,5,5);
-    ellipse(this.oscillator.pointInX, this.oscillator.pointInY, 5, 5);
-    ellipse(this.oscillator.pointOutX, this.oscillator.pointOutY, 5, 5);
+    ellipse(this.pointInX, this.pointInY, 5, 5);
+    ellipse(this.pointOutX, this.pointOutY, 5, 5);
+    
+    text(this.oscillator.frequency, leftTopY, 30); 
+    
   }
 }
 
@@ -66,12 +77,7 @@ class Oscillator{
   Oscillator outOscillator = null;
   float pointInX, pointInY, pointOutX, pointOutY;
   
-  public Oscillator(float pointInX, float pointInY, float pointOutX, float pointOutY){
-    this.pointInX = pointInX;
-    this.pointInY = pointInY;
-    this.pointOutX = pointOutX;
-    this.pointOutY = pointOutY;
-  };
+
   
   public int getFrequency(){
     return this.frequency;
