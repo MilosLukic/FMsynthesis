@@ -10,7 +10,7 @@ class Cell{
   float pointInY;
   float pointOutX;
   float pointOutY;
-  int connectorSize = 5;
+  int connectorSize = 10;
   
   public Cell(boolean empty, int leftTopX, int leftTopY, int segmentX, int segmentY ){
     this.empty = empty;
@@ -30,15 +30,20 @@ class Cell{
   }
   
   public void removeOscillator(){
+    Oscillator temp = this.oscillator;
+    oscillator.container = null;
     this.oscillator = null;
     this.empty = true;
+    temp = null;
   }
   
   public void moveOscillatorTo(Cell target){
-    if (this.empty){
+    if (this.empty || !target.empty){
       return;
     }
+    
     target.oscillator = this.oscillator;
+    target.oscillator.container = target;
     this.oscillator = null;
     target.setEmpty(false);
     this.setEmpty(true);
@@ -49,11 +54,14 @@ class Cell{
   }
   
   public boolean isEmpty(){
-    return this.empty;
+    return this.oscillator == null;
   }
   
   public void manageInput(){
+    
     if (this.empty){
+      activeIn = null;
+      activeOut = null;
       return;
     }
     
@@ -61,12 +69,10 @@ class Cell{
     float distanceOut = sqrt((this.pointOutX - mouseX)*(this.pointOutX - mouseX) + (this.pointOutY - mouseY)*(this.pointOutY - mouseY));
     
     if( distanceIn < connectorSize){
-      System.out.println("in");
       if (activeOut != null && activeOut != this.oscillator){
-        this.oscillator.setOutOscillator(activeOut);
+        activeOut.setOutOscillator(this.oscillator);
         activeIn = null;
         activeOut = null;
-        System.out.println("connected");
       }else if(activeIn == null){
         activeIn = this.oscillator;
       }
@@ -74,13 +80,19 @@ class Cell{
     }else if (distanceOut < connectorSize){
       System.out.println("out");
       if (activeIn != null && activeIn != this.oscillator){
-        activeIn.setOutOscillator(this.oscillator);
-            System.out.println("connected");
+        this.oscillator.setOutOscillator(activeIn);
+        this.oscillator.audioOut = null;
+        System.out.println("connected");
         activeIn = null;
         activeOut = null;
       }else if(activeOut == null){
         activeOut = this.oscillator;
       }
+    }else if(activeIn != null || activeOut != null){
+      activeIn = null;
+      activeOut = null;
+    }else if(mouseX > pointInX && mouseX < pointOutX && mouseY > leftTopY && mouseY < leftTopY + segmentY){
+      lockedOscillator = this.oscillator;
     }
   }
   
@@ -90,33 +102,51 @@ class Cell{
     rect(leftTopX, leftTopY, segmentX, segmentY);
     if (!this.empty)
       drawOscillator();
-    drawConnection();
   }
   
   public void drawConnection(){
     noFill();
-    if (this.oscillator == null || this.oscillator.outOscillator == null)
-      return;
-    float outX = this.oscillator.outOscillator.container.pointOutX;
-    float outY = this.oscillator.outOscillator.container.pointOutY;
-    bezier(pointInX, pointInY, outX, pointInY,  pointInX, outY, outX, outY);
-          System.out.println("wat");
+    if (this.oscillator != null && this.oscillator.outOscillator != null){
+          float outX = this.oscillator.outOscillator.container.pointInX;
+          float outY = this.oscillator.outOscillator.container.pointInY;
+          bezier(pointOutX, pointOutY, outX, pointOutY,  pointOutX, outY, outX, outY);
+    }else if(this.oscillator != null && this.oscillator.audioOut != null){
+        float outX = this.oscillator.audioOut.x;
+        float outY = this.oscillator.audioOut.y;
+        bezier(pointOutX, pointOutY, outX, pointOutY,  pointOutX, outY, outX, outY);
+    }
+    
   }
   
+  public void drawDynamicOut(float dynamicX, float dynamicY){
+        bezier(pointInX, pointInY, dynamicX, pointInY,  pointInX, dynamicY, dynamicX, dynamicY);
+  }
+  
+  public void drawDynamicIn(float dynamicX, float dynamicY){
+        bezier(dynamicX, dynamicY, pointOutX, dynamicY,  dynamicX, pointOutY, pointOutX, pointOutY);
+  }
+
   public void drawOscillator(){
+    float referenceX = leftTopX;
+    float referenceY = leftTopY;
+    
+    if (lockedOscillator == this.oscillator){
+      referenceX = mouseX - segmentX*oscillatorSizeRelative*0.5;
+      referenceY = mouseY - segmentY*0.5;
+    }
     
     textSize(10);
     fill(200);
     stroke(0);
-    rect(leftTopX, leftTopY, segmentX*oscillatorSizeRelative, segmentY, 20);
+    rect(referenceX, referenceY, segmentX*oscillatorSizeRelative, segmentY, 20);
     fill(255,5,5);
-    ellipse(this.pointInX, this.pointInY, connectorSize, connectorSize);
-    ellipse(this.pointOutX, this.pointOutY, connectorSize, connectorSize);
+    arc(referenceX, referenceY + segmentY*0.5, connectorSize, connectorSize, -HALF_PI, HALF_PI);
+    arc(referenceX + segmentX*oscillatorSizeRelative, referenceY + segmentY*0.5, connectorSize, connectorSize, HALF_PI, PI+HALF_PI);
     
-    text("f", leftTopX+segmentX*0.1, leftTopY+segmentY*0.3); 
-    text(this.oscillator.frequency, leftTopX+segmentX*0.2, leftTopY+segmentY*0.3); 
-    text("A", leftTopX+segmentX*0.1, leftTopY+segmentY*0.7);
-    text(this.oscillator.amplitude, leftTopX+segmentX*0.2, leftTopY+segmentY*0.7); 
+    text("f", referenceX+segmentX*0.1, referenceY+segmentY*0.3); 
+    text(this.oscillator.frequency, referenceX+segmentX*0.2, referenceY+segmentY*0.3); 
+    text("A", referenceX+segmentX*0.1, referenceY+segmentY*0.7);
+    text(this.oscillator.amplitude, referenceX+segmentX*0.2, referenceY+segmentY*0.7); 
     
   }
 }
@@ -127,6 +157,7 @@ class Oscillator{
   float amplitude = 1.0f;
   String type = "SINE";
   Oscillator outOscillator = null;
+  AudioOut audioOut = null;
   float pointOutX, pointOutY;
   Cell container = null;
   
@@ -160,4 +191,53 @@ class Oscillator{
    public void setOutOscillator(Oscillator outOscillator){
      this.outOscillator = outOscillator;
    }
+
+}
+
+class AudioOut{
+  float x;
+  float y;
+  float offsetX;
+  float radius;
+  
+  public AudioOut(){
+    this.x = width;
+    this.y = ySegment * HEADER_HEIGHT + ySegment * (ROWS)/2;
+    this.offsetX = -25;
+    this.radius = 30;
+  }
+  
+  public void play(){
+    LinkedList<Oscillator> connectedToOut = new LinkedList<Oscillator>();
+    for (Oscillator o : oscillators){
+      if (o.audioOut != null){
+        connectedToOut.add(o);
+      }
+    }
+    
+    
+  }
+  
+  public void manageInput(){
+    float distance = sqrt((this.x - mouseX)*(this.x - mouseX) + (this.y - mouseY)*(this.y - mouseY));
+    if (distance < radius){
+      if(activeOut != null){
+        activeOut.outOscillator = null;
+        activeOut.audioOut = audioOut;
+        activeOut = null;
+        activeIn = null;
+      }
+    }
+  }
+  
+  public void render(){
+    ellipseMode(RADIUS);
+    fill(0);
+    ellipse(this.x, this.y, radius, radius);
+    noFill();
+    fill(255);
+    textSize(12);
+    text("Out", this.x+this.offsetX, this.y); 
+  }
+  
 }

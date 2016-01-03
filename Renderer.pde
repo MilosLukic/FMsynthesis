@@ -3,22 +3,33 @@ class Renderer{
   public void drawCells(){
     for (Cell[] row : cells){
       for (Cell c : row){
-        c.drawCell();
+        if (lockedOscillator != null && lockedOscillator == c.oscillator)
+          continue;
+         c.drawCell();
       }
+    }
+    for (Cell[] row : cells){
+      for (Cell c : row){
+        if(c.oscillator != null) c.drawConnection();
+      }
+    }
+    
+    if(lockedOscillator != null) lockedOscillator.container.drawCell();
+    
+    drawActiveConnection();
+  }
+  
+  public void drawActiveConnection(){
+    Oscillator activeConn = null;
+    if (activeIn != null){
+      activeIn.container.drawDynamicOut((float) mouseX, (float) mouseY);
+    }else if(activeOut != null){
+      activeOut.container.drawDynamicIn((float) mouseX, (float) mouseY);
     }
   }
   
   public void drawOut(){
-    ellipseMode(RADIUS);
-    fill(0);
-    float x = width;
-    float y = ySegment * HEADER_HEIGHT + ySegment * (ROWS)/2;
-    ellipse(x, y, 30,30);
-    noFill();
-    fill(255);
-    textSize(12);
-    text("Out", x-25, y); 
-
+    audioOut.render();
   }
   
   public void drawTitle(){
@@ -28,11 +39,21 @@ class Renderer{
     text("FM Synthesis Board", width/2, ySegment/2);
   }
   
-  public void drawHelp(){
+  public void drawToolbar(){
     fill(0);
     textSize(20);
     textAlign(CENTER);
     text("Help", width-100, ySegment/2);
+    
+    fill(0);
+    textSize(20);
+    textAlign(CENTER);
+    text("Play", width-200, ySegment/2);
+  }
   
+
+  
+  public void drawBackground(){
+    background(255);
   }
 }
