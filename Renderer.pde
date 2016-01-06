@@ -19,6 +19,13 @@ class Renderer{
     drawActiveConnection();
   }
   
+  public void drawOscillatorEditor(){
+
+    fill(200,200,200);
+    rect(width/2-editorWidth/2, height/2-editorHeight/2, editorWidth, editorHeight, 10);
+    
+  }
+  
   public void drawActiveConnection(){
     Oscillator activeConn = null;
     if (activeIn != null){

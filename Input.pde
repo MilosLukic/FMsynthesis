@@ -3,7 +3,11 @@ LinkedList<Oscillator> oscillators = new LinkedList<Oscillator>();
 void mousePressed() {
     try{
         if(mouseButton == LEFT){
-          cells[floor((mouseY-(ySegment*HEADER_HEIGHT))/ySegment)][floor(mouseX/xSegment)].manageInput();
+          if (mouseEvent.getClickCount()==2){
+            cells[floor((mouseY-(ySegment*HEADER_HEIGHT))/ySegment)][floor(mouseX/xSegment)].editOscillator();
+          }else{
+            cells[floor((mouseY-(ySegment*HEADER_HEIGHT))/ySegment)][floor(mouseX/xSegment)].manageInput();
+          }
         }else if (mouseButton == RIGHT){
           Cell cell = cells[floor((mouseY-(ySegment*HEADER_HEIGHT))/ySegment)][floor(mouseX/xSegment)];
           if(cell.isEmpty()){

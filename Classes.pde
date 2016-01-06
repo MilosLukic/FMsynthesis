@@ -57,6 +57,18 @@ class Cell{
     return this.oscillator == null;
   }
   
+  public void editOscillator(){
+    if(!this.isEmpty()){
+      editingOscillator = this.oscillator;
+      showOscillatorEditor = true;
+      frequencyTextField.setText(Integer.toString(this.oscillator.frequency));
+      amplitudeTextField.setText(Float.toString(this.oscillator.amplitude));
+      frequencyTextField.show();
+      amplitudeTextField.show();
+      submitButton.show();
+    }
+  }
+  
   public void manageInput(){
     
     if (this.empty){
@@ -180,7 +192,7 @@ class Oscillator{
     this.frequency = frequency;
    }
    
-   public void setFrequency(float amplitude){
+   public void setAmplitude(float amplitude){
     this.amplitude = amplitude;
    }
    
