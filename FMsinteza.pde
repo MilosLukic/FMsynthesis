@@ -1,3 +1,11 @@
+import java.applet.Applet;
+import java.awt.event.*;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.SourceDataLine;
+
 import java.util.*;
 import controlP5.*;
 
@@ -12,10 +20,8 @@ public int FOOTER_HEIGHT = 1;
 public float SIDE_MARGIN = 0.3f;
 public int xSegment;
 public int ySegment;
-public Oscillator lockedOscillator = null;
 public AudioOut audioOut;
 public boolean showOscillatorEditor = false;
-public Oscillator editingOscillator;
 int editorWidth;
 int editorHeight;
 public String editingFrequency, editingAmplitude;
@@ -24,8 +30,11 @@ Button submitButton;
 Renderer renderer;
 
 Cell[][] cells = new Cell[ROWS][COLUMNS];
-Oscillator activeOut = null;
-Oscillator activeIn = null;
+LinkedList<Oscillator> oscillators = new LinkedList<Oscillator>();
+public Oscillator editingOscillator;
+public Oscillator lockedOscillator = null;
+public Oscillator activeOut = null;
+public Oscillator activeIn = null;
 
 
 void setup(){
@@ -64,49 +73,6 @@ void initializeCells(){
     }
     leftTopY += ySegment;
   }
-}
-
-void setupOscillatorEditor(){
-  editorWidth = width/4;
-  editorHeight = height/4;
-  PFont font = createFont("arial", 20);
- 
-  cp5 = new ControlP5(this);
- 
-  frequencyTextField = cp5.addTextfield("textInput_1")
-    .setPosition(width/2-editorWidth/3,height/2-editorHeight/3)
-      .setSize(editorWidth/3, editorHeight/6)
-        .setFont(font)
-          .setFocus(true)
-            .setColor(color(0, 0, 0))
-              .setText("jojo")
-                .setAutoClear(false)
-                  .setLabelVisible(false)
-                    .setColorBackground(color(225, 225, 225))
-                      .setLabel("");
-                
-   amplitudeTextField = cp5.addTextfield("textInput_2")
-    .setPosition(width/2-editorWidth/3,height/2)
-      .setSize(editorWidth/3, editorHeight/6)
-        .setFont(font)
-          .setFocus(false)
-            .setColor(color(0, 0, 0))
-              .setText("jojo")
-                .setAutoClear(false)
-                  .setColorBackground(color(225, 225, 225))
-                    .setLabel("");
-
-  
-  frequencyTextField.hide();
-  amplitudeTextField.hide();
-  
-              
-  submitButton = cp5.addButton("apply")
-     .setValue(0)
-       .setPosition(width/2,height/2 +editorHeight/4)
-         .setSize(3*editorWidth/8,editorHeight/10);
-  
-  submitButton.hide();
 }
 
 public void apply() {

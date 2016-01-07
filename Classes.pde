@@ -30,6 +30,13 @@ class Cell{
   }
   
   public void removeOscillator(){
+    /* Remove oscillator form oscillators list */
+    for(Oscillator osc : oscillators) {
+      if(osc == this.oscillator) {
+        oscillators.remove(osc);
+        break;
+       }
+    }
     Oscillator temp = this.oscillator;
     oscillator.container = null;
     this.oscillator = null;
@@ -204,52 +211,4 @@ class Oscillator{
      this.outOscillator = outOscillator;
    }
 
-}
-
-class AudioOut{
-  float x;
-  float y;
-  float offsetX;
-  float radius;
-  
-  public AudioOut(){
-    this.x = width;
-    this.y = ySegment * HEADER_HEIGHT + ySegment * (ROWS)/2;
-    this.offsetX = -25;
-    this.radius = 30;
-  }
-  
-  public void play(){
-    LinkedList<Oscillator> connectedToOut = new LinkedList<Oscillator>();
-    for (Oscillator o : oscillators){
-      if (o.audioOut != null){
-        connectedToOut.add(o);
-      }
-    }
-    
-    
-  }
-  
-  public void manageInput(){
-    float distance = sqrt((this.x - mouseX)*(this.x - mouseX) + (this.y - mouseY)*(this.y - mouseY));
-    if (distance < radius){
-      if(activeOut != null){
-        activeOut.outOscillator = null;
-        activeOut.audioOut = audioOut;
-        activeOut = null;
-        activeIn = null;
-      }
-    }
-  }
-  
-  public void render(){
-    ellipseMode(RADIUS);
-    fill(0);
-    ellipse(this.x, this.y, radius, radius);
-    noFill();
-    fill(255);
-    textSize(12);
-    text("Out", this.x+this.offsetX, this.y); 
-  }
-  
 }

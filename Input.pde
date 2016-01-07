@@ -1,4 +1,4 @@
-LinkedList<Oscillator> oscillators = new LinkedList<Oscillator>();
+
 
 void mousePressed() {
     try{
