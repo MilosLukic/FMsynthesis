@@ -173,7 +173,7 @@ class Cell{
 class Oscillator{
   boolean active = true;
   int frequency = 440;
-  float amplitude = 1.0f;
+  float amplitude = 100f;
   String type = "SINE";
   Oscillator outOscillator = null;
   AudioOut audioOut = null;
@@ -211,4 +211,38 @@ class Oscillator{
      this.outOscillator = outOscillator;
    }
 
+}
+
+class Envelope{
+  float attack = 0.1;
+  float decay = 0.4;
+  float release = 0.2;
+  float sustainAmplitude = 0.6;  
+  float lastAmplitude = 0.0;
+  
+  public float coeff(long sample, int sampleRate){
+    float time = sample/(float)sampleRate;
+    
+    if (time < attack){
+      lastAmplitude = time/attack;
+    }else if( time - attack < decay){
+      float relativeTime = time - attack;
+      float share = relativeTime / decay;
+      lastAmplitude =  1 - (1-sustainAmplitude) * share;
+    }else{
+      lastAmplitude =  sustainAmplitude;
+    }
+    return lastAmplitude;
+  }
+  
+  public float release(float ratio){
+    ratio = ratio*lastAmplitude;
+    if(ratio >= lastAmplitude)
+      return 0f;
+      else{
+        return lastAmplitude - ratio;
+      }
+    
+  }
+  
 }

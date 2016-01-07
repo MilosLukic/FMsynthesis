@@ -1,4 +1,4 @@
-
+boolean activeThread = false;
 
 void mousePressed() {
     try{
@@ -38,8 +38,20 @@ void mouseReleased() {
   lockedOscillator = null;
 }
 
-public void manageToolbarInput(){
-  if(dist(width-200, ySegment/2, mouseX, mouseY) < 40){
-    audioOut.play();
+void keyPressed(){
+  if (key == 'c' && activeThread == false){
+    activeThread = true;
+    thread("play");
   }
+}
+
+void keyReleased(){
+  if (key == 'c'){
+    audioOut.stop();
+  }
+}
+
+public void play(){
+  if(!audioOut.playing)
+      audioOut.play();
 }
