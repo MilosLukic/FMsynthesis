@@ -41,3 +41,18 @@ void setupOscillatorEditor(){
   
   submitButton.hide();
 }
+
+public void apply() {
+  try{
+      editingOscillator.setFrequency(Integer.parseInt(frequencyTextField.getText()));
+      editingOscillator.setAmplitude(Float.parseFloat(amplitudeTextField.getText()));
+      showOscillatorEditor = false;
+      frequencyTextField.hide();
+      amplitudeTextField.hide();
+      submitButton.hide();
+  }catch (Exception e){
+      //TODO handle bad input
+      println("Bad input, please write some code into catch exception thing");
+  }
+
+}

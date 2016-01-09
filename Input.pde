@@ -1,4 +1,7 @@
 boolean activeThread = false;
+LinkedList<Note> activeNotes = new LinkedList<Note>();
+LinkedList<Note> nextActiveNotes = null;
+HashMap<String, Integer> relativeNotes;
 
 void mousePressed() {
     try{
@@ -27,7 +30,6 @@ void mousePressed() {
     }
     if(mouseButton == LEFT){
       audioOut.manageInput();
-      manageToolbarInput();  
   }
 }
 
@@ -39,15 +41,19 @@ void mouseReleased() {
 }
 
 void keyPressed(){
-  if (key == 'c' && activeThread == false){
-    activeThread = true;
-    thread("play");
+  for (Note activeNote : activeNotes){
+    
+    if (activeNote.letter == key){
+      activeNote.active=true;
+    }
   }
 }
 
 void keyReleased(){
-  if (key == 'c'){
-    audioOut.stop();
+  for (Note activeNote : activeNotes){
+    if (activeNote.letter == key){
+      activeNote.active = false;
+    }
   }
 }
 

@@ -97,11 +97,9 @@ class Cell{
       }
       
     }else if (distanceOut < connectorSize){
-      System.out.println("out");
       if (activeIn != null && activeIn != this.oscillator){
         this.oscillator.setOutOscillator(activeIn);
         this.oscillator.audioOut = null;
-        System.out.println("connected");
         activeIn = null;
         activeOut = null;
       }else if(activeOut == null){
@@ -117,13 +115,14 @@ class Cell{
   
   public void drawCell(){
     fill(255);
-    stroke(0);
+    stroke(0, 0, 0, 50);
     rect(leftTopX, leftTopY, segmentX, segmentY);
     if (!this.empty)
       drawOscillator();
   }
   
   public void drawConnection(){
+    stroke(0, 0, 0);
     noFill();
     if (this.oscillator != null && this.oscillator.outOscillator != null){
           float outX = this.oscillator.outOscillator.container.pointInX;
@@ -157,6 +156,7 @@ class Cell{
     textSize(10);
     fill(200);
     stroke(0);
+    fill(200,200,200);
     rect(referenceX, referenceY, segmentX*oscillatorSizeRelative, segmentY, 20);
     fill(255,5,5);
     arc(referenceX, referenceY + segmentY*0.5, connectorSize, connectorSize, -HALF_PI, HALF_PI);
@@ -173,7 +173,7 @@ class Cell{
 class Oscillator{
   boolean active = true;
   int frequency = 440;
-  float amplitude = 100f;
+  float amplitude = 1f;
   String type = "SINE";
   Oscillator outOscillator = null;
   AudioOut audioOut = null;
@@ -196,7 +196,9 @@ class Oscillator{
   }
   
   public void setFrequency(int frequency){
-    this.frequency = frequency;
+    int n = tone.getNote((float) frequency);
+    System.out.println(n);
+    this.frequency = (int) tone.getFrequency(n);
    }
    
    public void setAmplitude(float amplitude){
@@ -205,6 +207,19 @@ class Oscillator{
    
    public void setType(){
     this.type = type;
+   }
+   
+   public void setAudioOut(AudioOut aout){
+     this.audioOut = aout;
+     float ampl = -1;
+     Oscillator carrier = null;
+     for (Oscillator o : oscillators) {
+      if (o.audioOut != null && o.amplitude > ampl) {
+        carrier = o;
+        ampl = o.amplitude;
+      }
+     }
+     int n = tone.getNote(carrier.frequency);
    }
    
    public void setOutOscillator(Oscillator outOscillator){

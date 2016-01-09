@@ -28,6 +28,7 @@ public String editingFrequency, editingAmplitude;
 Textfield frequencyTextField, amplitudeTextField;
 Button submitButton;
 Renderer renderer;
+Tone tone;
 
 Cell[][] cells = new Cell[ROWS][COLUMNS];
 LinkedList<Oscillator> oscillators = new LinkedList<Oscillator>();
@@ -39,7 +40,11 @@ public Oscillator activeIn = null;
 
 void setup(){
   size(1200, 766);
+  
+
   initializeCells();
+  tone = new Tone();
+  audioOut = new AudioOut();
   renderer = new Renderer();
   setupOscillatorEditor();
 
@@ -55,12 +60,15 @@ void draw(){
   if (showOscillatorEditor) renderer.drawOscillatorEditor();
 }
 
+void stop() {
+  audioOut.kill();
+} 
+
 void initializeCells(){
   int sideMargin = (int) (SIDE_MARGIN*(WIDTH/COLUMNS));
   ySegment = (int) Math.round(HEIGHT/(ROWS+HEADER_HEIGHT + FOOTER_HEIGHT));
   xSegment = (int) Math.round((WIDTH-sideMargin*2)/COLUMNS);
     
-  audioOut = new AudioOut();
   int leftTopY = HEADER_HEIGHT * ySegment;
   int leftTopX = sideMargin;
   System.out.println(sideMargin);
@@ -73,19 +81,4 @@ void initializeCells(){
     }
     leftTopY += ySegment;
   }
-}
-
-public void apply() {
-  try{
-      editingOscillator.setFrequency(Integer.parseInt(frequencyTextField.getText()));
-      editingOscillator.setAmplitude(Float.parseFloat(amplitudeTextField.getText()));
-      showOscillatorEditor = false;
-      frequencyTextField.hide();
-      amplitudeTextField.hide();
-      submitButton.hide();
-  }catch (Exception e){
-      //TODO handle bad input
-      println("Bad input, please write some code into catch exception thing");
-  }
-
 }

@@ -1,4 +1,5 @@
 
+
 class AudioOut {
   float x;
   float y;
@@ -6,12 +7,42 @@ class AudioOut {
   float radius;
   int sampleRate = 12050;
   boolean playing = false;
+  float maxSpec = 0;
+  FFT fft;
+  byte[] buf;
+  float[] floatBuf;
+  Envelope envelope;
+  SourceDataLine source;
+  AudioFormat af;
 
   public AudioOut() {
     this.x = width;
     this.y = ySegment * HEADER_HEIGHT + ySegment * (ROWS)/2;
     this.offsetX = -25;
     this.radius = 30;
+
+
+    try {
+      af = new AudioFormat((float) sampleRate, 8, 1, true, true);
+      DataLine.Info info = new DataLine.Info(SourceDataLine.class, af);
+      source = (SourceDataLine) AudioSystem.getLine(info);
+      envelope = new Envelope();
+      buf = new byte[512]; 
+      floatBuf = new float[512];
+      source.open(af, buf.length);
+      fft = new FFT(buf.length, sampleRate);
+    }    
+    catch (Exception e1) {
+      System.out.println(e1);
+      System.exit(1);
+    }
+    thread("play");
+  }
+
+  public void kill() {
+    source.drain();
+    source.stop();
+    source.close();
   }
 
 
@@ -20,78 +51,57 @@ class AudioOut {
     LinkedList<Oscillator> connectedToOut = new LinkedList<Oscillator>();
     float value = 0;
     playing = true;
-    System.out.println("playing");
-    try {
-      AudioFormat af = new AudioFormat((float) sampleRate, 8, 1, true, true);
-      DataLine.Info info = new DataLine.Info(SourceDataLine.class, af);
-      SourceDataLine source = (SourceDataLine) AudioSystem.getLine(info);
-      Envelope envelope = new Envelope();
-
-      byte[] buf = new byte[100]; 
-      source.open(af, buf.length);
-      source.start();
-      while (this.playing) {
-        for (int i = 0; i<buf.length; i++) {
-          time++;
-          value = 0;
+    int count = 0;
+    source.start();
+    while (this.playing) {
+      for (int i = 0; i<buf.length; i++) {
+        time++;
+        value = 0;
+        count = 0;
+        for (Note activeNote : activeNotes) {
+          if (activeNote.dying || !activeNote.active) continue;
+          else count++;
+          
+          float tempSample = 0;
           for (Oscillator o : oscillators) {
             if (o.audioOut != null) {
               connectedToOut.add(o);
-              value += getSignal(o, time);
+              tempSample += getSignal(o, time, activeNote);
             }
           }
-          buf[i] = (byte) (envelope.coeff(time, sampleRate)*value);
+          
+          value += 100*tempSample/count*envelope.coeff(activeNote.time, sampleRate);
+          activeNote.time++;
         }
 
-
-        source.write(buf, 0, buf.length);
+        floatBuf[i] = value;
+        buf[i] = (byte) floatBuf[i];
       }
-      if (envelope != null) {
-        int sampleNumber = Math.round(envelope.release*sampleRate);
-        int currentSamples = 0;
-        long currentTime = time;
-        while (currentSamples < sampleNumber) {
-          for (int i = 0; i<buf.length; i++) {
-            time++;
-            value = 0;
-            for (Oscillator o : oscillators) {
-              if (o.audioOut != null) {
-                connectedToOut.add(o);
-                value += getSignal(o, time);
-              }
-            }
-            buf[i] = (byte) (envelope.release((time - currentTime)/(float)sampleNumber )*value);
-          }
-          currentSamples += buf.length;
-          source.write(buf, 0, buf.length);
-        }
-      }
-
-      source.drain();
-      source.stop();
-      source.close();
-    } 
-    catch (Exception e1) {
-      System.out.println(e1);
+      source.write(buf, 0, buf.length);
     }
-    activeThread = false;
+
   }
 
   public void stop() {
     this.playing = false;
   }
 
-  public double getSignal(Oscillator oscillator, long time) {
+  public double getSignal(Oscillator oscillator, long time, Note n) {
+    /* If we are calculating singal for end oscillator, autotune the frequency to some tone */
     LinkedList<Oscillator> connectedToOut = new LinkedList<Oscillator>();
     float value = 0;
 
     for (Oscillator o : oscillators) {
       if (o.outOscillator == oscillator) {
-
-        value += getSignal(o, time);
+        value += getSignal(o, time, n);
       }
     }
-    return (float) oscillator.amplitude * Math.sin( 2 * Math.PI * oscillator.frequency * time / this.sampleRate + value);
+    
+    int frequency = (int) tone.getFrequency(n.number);
+    if (oscillator.audioOut == null){
+      frequency = oscillator.frequency * frequency / oscillator.outOscillator.frequency;
+    }
+    return (float) oscillator.amplitude * Math.sin( 2 * Math.PI * frequency * time / this.sampleRate + value);
   }
 
   public void manageInput() {
@@ -99,12 +109,69 @@ class AudioOut {
     if (distance < radius) {
       if (activeOut != null) {
         activeOut.outOscillator = null;
-        activeOut.audioOut = audioOut;
+        activeOut.setAudioOut(audioOut);
         activeOut = null;
         activeIn = null;
       }
     }
   }
+
+  public void drawFFT() {
+    float g = 0;
+    float h = 0;
+    float specStep;
+    int specFraction = 3;
+
+    float specScale = (float) width / (fft.specSize() / specFraction);
+
+    float[] group = getGroup(32);
+
+    // Frekvenčni pasovi
+    noStroke();
+    for (int i = 0; i < fft.specSize() / specFraction; i++) {
+      g = map(fft.getBand(i), 0, maxSpec, 50, 255);
+      h = map(fft.getBand(i), 0, maxSpec, 2, ySegment);
+
+      fill(173, g, 47);
+      rect(i * specScale, ySegment - h, specScale, h);
+    }
+
+    // Povprečja
+    stroke(255, 255, 0, 200);
+    specStep = width / group.length;
+    for (int i = 0; i < group.length; i++) {
+      h = height - map(group[i], 0, maxSpec, 0, height);
+      line(i * specStep, h, (i + 1) * specStep, h);
+    }
+  }
+
+  public float[] getGroup(int theGroupNum) {
+    // Izvedemo FFT nad trenutnimi vzorci
+    fft.forward(floatBuf);
+
+    // Povprečimo v skupine
+    float[] group = new float[theGroupNum];
+
+    int specLimit = fft.specSize() - 1;
+    int groupSize = specLimit / theGroupNum;
+    for (int i = 0; i < group.length; i++) {
+      group[i] = 0;
+    }
+
+    for (int i = 0; i < specLimit; i++) {
+      if (fft.getBand(i) > maxSpec) {
+        maxSpec = fft.getBand(i);
+      }
+      int index = (int) Math.floor(i / groupSize);
+      group[index] += fft.getBand(i);
+    }
+
+    for (int i = 0; i < group.length; i++) {
+      group[i] /= groupSize;
+    }
+    return group;
+  }
+
 
   public void render() {
     ellipseMode(RADIUS);
@@ -114,5 +181,7 @@ class AudioOut {
     fill(255);
     textSize(12);
     text("Out", this.x+this.offsetX, this.y);
+
+    if (floatBuf != null) drawFFT();
   }
 }
