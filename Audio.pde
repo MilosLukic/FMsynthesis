@@ -59,7 +59,7 @@ class AudioOut {
         value = 0;
         count = 0;
         for (Note activeNote : activeNotes) {
-          if (activeNote.dying || !activeNote.active) continue;
+          if (!activeNote.active) continue;
           else count++;
           
           float tempSample = 0;
@@ -69,8 +69,20 @@ class AudioOut {
               tempSample += getSignal(o, time, activeNote);
             }
           }
-          
-          value += 100*tempSample/count*envelope.coeff(activeNote.time, sampleRate);
+          if (activeNote.dying){
+            activeNote.lastAmplitude = envelope.release(activeNote.time, sampleRate, activeNote.lastAmplitude);
+            value += 100*activeNote.lastAmplitude*tempSample;
+            
+            if (activeNote.lastAmplitude <= 0f){
+              activeNote.active = false;
+              activeNote.dying = false;
+              activeNote.time = 0;
+            }
+            
+          }else{
+            activeNote.lastAmplitude = envelope.coeff(activeNote.time, sampleRate, activeNote);
+            value += 100*tempSample*activeNote.lastAmplitude;
+          }
           activeNote.time++;
         }
 

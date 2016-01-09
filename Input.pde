@@ -45,6 +45,7 @@ void keyPressed(){
     
     if (activeNote.letter == key){
       activeNote.active=true;
+      activeNote.dying=false;
     }
   }
 }
@@ -52,7 +53,8 @@ void keyPressed(){
 void keyReleased(){
   for (Note activeNote : activeNotes){
     if (activeNote.letter == key){
-      activeNote.active = false;
+      activeNote.dying = true;
+      activeNote.time = 0;
     }
   }
 }

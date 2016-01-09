@@ -40,8 +40,8 @@ class Note{
   boolean dying = false;
   boolean active = false;
   int offset;
-  int time = 0;
-  int lastFrequency = 0;
+  long time = 0;
+  float lastAmplitude = 0;
   char letter;
   int number = 0;
   

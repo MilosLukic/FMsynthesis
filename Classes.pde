@@ -233,13 +233,15 @@ class Envelope{
   float decay = 0.4;
   float release = 0.2;
   float sustainAmplitude = 0.6;  
-  float lastAmplitude = 0.0;
   
-  public float coeff(long sample, int sampleRate){
+  public float coeff(long sample, int sampleRate, Note activeNote){
+    float lastAmplitude = 0.0;
     float time = sample/(float)sampleRate;
-    
     if (time < attack){
       lastAmplitude = time/attack;
+      if (activeNote.lastAmplitude > lastAmplitude){
+        activeNote.time = (long) activeNote.lastAmplitude*sampleRate;
+      }
     }else if( time - attack < decay){
       float relativeTime = time - attack;
       float share = relativeTime / decay;
@@ -250,8 +252,8 @@ class Envelope{
     return lastAmplitude;
   }
   
-  public float release(float ratio){
-    ratio = ratio*lastAmplitude;
+  public float release(long sample, int sampleRate, float lastAmplitude){
+    float ratio = sample/(float)sampleRate/release*lastAmplitude;
     if(ratio >= lastAmplitude)
       return 0f;
       else{
