@@ -105,6 +105,8 @@ class Cell implements Serializable {
       textFieldS.setText(Float.toString(this.oscillator.envelope.sustainAmplitude));
       textFieldR.setText(Float.toString(this.oscillator.envelope.release));
       dropdownSignalType.setStringValue(this.oscillator.type);
+      dropdownSignalType.setLabel(this.oscillator.type);
+      System.out.println(dropdownSignalType.getStringValue());
       frequencyTextField.show();
       amplitudeTextField.show();
       submitButton.show();
@@ -306,7 +308,7 @@ class Oscillator implements Serializable {
   }
 
   public float calculateSample(float frequency, long time, int sampleRate, float value) {
-    if (type == "Rectangle")
+    if (type == "Square")
       return (float) Math.signum(Math.sin((float)(2 * Math.PI * frequency * time / sampleRate + value)));
     else if (type == "Triangle")
       return (float) Math.asin(Math.sin((float)(2 * Math.PI * frequency * time / sampleRate + value)));

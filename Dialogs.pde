@@ -10,7 +10,7 @@ void customizeDropdown(DropdownList ddl) {
   for (String s : dropdown) {
     ddl.addItem(s, s);
   }
-
+  ddl.setStringValue(dropdown[0]);
   //ddl.scroll(0);
   ddl.setColorBackground(color(60));
   ddl.setColorActive(color(255, 128));
@@ -21,7 +21,7 @@ void controlEvent(ControlEvent theEvent) {
     println("event from group : "+theEvent.getGroup().getValue()+" from "+theEvent.getGroup());
   } else if (theEvent.isController() && editingOscillator != null) {
     int index = (int)(theEvent.getController().getValue());
-    editingOscillator.type = dropdown[index];
+    dropdownSignalType.setStringValue(dropdown[index]);
   }
 }
 
@@ -34,8 +34,7 @@ void setupOscillatorEditor() {
 
   dropdownSignalType = cp5.addDropdownList("Signal type")
     .setPosition(width/2-editorWidth/2 + editorWidth/20 + editorWidth/5, height/2-editorHeight/2+editorHeight/20 + 45*editorHeight/100)
-    .setOpen(false)
-    .setDefaultValue(0.0);
+    .setOpen(false);
 
   customizeDropdown(dropdownSignalType);
 
@@ -222,6 +221,8 @@ public void apply() {
     editingOscillator.envelope.decay = Float.parseFloat(textFieldD.getText());
     editingOscillator.envelope.release = Float.parseFloat(textFieldR.getText());
     editingOscillator.envelope.sustainAmplitude = Float.parseFloat(textFieldS.getText());
+    editingOscillator.type = dropdownSignalType.getStringValue();
+          System.out.println(dropdownSignalType.getStringValue());
     //editingOscillator.envelope.decayQ = Float.parseFloat(textFieldA.getText());
     showOscillatorEditor = false;
     frequencyTextField.hide();
