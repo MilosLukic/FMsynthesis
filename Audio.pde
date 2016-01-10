@@ -112,7 +112,7 @@ class AudioOut {
     }else{
       n.lastAmplitude = oscillator.envelope.coeff(n.time, sampleRate, n)*0.7;
     }
-    return (float) oscillator.amplitude * n.lastAmplitude * Math.sin( 2 * Math.PI * frequency * time / this.sampleRate + value);
+    return (float) oscillator.amplitude * n.lastAmplitude * oscillator.calculateSample(frequency, time, sampleRate, value);
       
   }
 
