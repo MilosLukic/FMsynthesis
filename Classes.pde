@@ -124,6 +124,8 @@ class Cell implements Serializable {
       dropdownSignalType.show();
       oscillatorLabel.show();
       signalTypeLabel.show();
+      checkboxQ.show();
+      labelQ.show();
     }
   }
 
