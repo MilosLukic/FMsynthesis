@@ -22,6 +22,7 @@ public class Tone{
     activeNotes.add(new Note('o', 53));
     activeNotes.add(new Note('p', 55));
     activeNotes.add(new Note('đ', 58));
+    activeNotes.add(new Note(' ', -1));
   }
   
   public int getNote(float frequency){

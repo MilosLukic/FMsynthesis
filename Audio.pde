@@ -57,6 +57,7 @@ class AudioOut {
         value = 0;
         count = 0;
         for (Note activeNote : activeNotes) {
+          
           if (!activeNote.active) continue;
           else count++;
           
@@ -101,8 +102,12 @@ class AudioOut {
         value += getSignal(o, time, n);
       }
     }
-    
-    int frequency = (int) tone.getFrequency(n.number);
+    int frequency = 0;
+    if (n.number == -1){
+      frequency = oscillator.frequency;
+    }else
+      frequency = (int) tone.getFrequency(n.number);
+      
     if (oscillator.audioOut == null){
       frequency = oscillator.frequency * frequency / oscillator.outOscillator.frequency;
     }
