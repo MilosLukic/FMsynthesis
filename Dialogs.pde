@@ -46,6 +46,89 @@ void setupOscillatorEditor(){
   
   customizeDropdown(dropdownSignalType);
   
+  textFieldA = cp5.addTextfield("textInput_10")
+    .setPosition(width/2 + editorWidth/20 + editorWidth/5 ,height/2-editorHeight/2+editorHeight/20 + 15*editorHeight/100)
+      .setSize(editorWidth/5, editorHeight/12)
+        .setFont(font)
+          .setFocus(true)
+            .setColor(color(0, 0, 0))
+              .setText("jojo")
+                .setAutoClear(false)
+                  .setLabelVisible(false)
+                    .setColorBackground(color(225, 225, 225))
+                      .setLabel("");
+  
+    textFieldD = cp5.addTextfield("textInput_11")
+    .setPosition(width/2 + editorWidth/20 + editorWidth/5 ,height/2-editorHeight/2+editorHeight/20 + 30*editorHeight/100)
+      .setSize(editorWidth/5, editorHeight/12)
+        .setFont(font)
+          .setFocus(true)
+            .setColor(color(0, 0, 0))
+              .setText("jojo")
+                .setAutoClear(false)
+                  .setLabelVisible(false)
+                    .setColorBackground(color(225, 225, 225))
+                      .setLabel("");
+ textFieldS = cp5.addTextfield("textInput_12")
+    .setPosition(width/2 + editorWidth/20 + editorWidth/5 ,height/2-editorHeight/2+editorHeight/20 + 45*editorHeight/100)
+      .setSize(editorWidth/5, editorHeight/12)
+        .setFont(font)
+          .setFocus(true)
+            .setColor(color(0, 0, 0))
+              .setText("jojo")
+                .setAutoClear(false)
+                  .setLabelVisible(false)
+                    .setColorBackground(color(225, 225, 225))
+                      .setLabel("");
+                      
+   textFieldR = cp5.addTextfield("textInput_13")
+    .setPosition(width/2 + editorWidth/20 + editorWidth/5 ,height/2-editorHeight/2+editorHeight/20 + 60*editorHeight/100)
+      .setSize(editorWidth/5, editorHeight/12)
+        .setFont(font)
+          .setFocus(true)
+            .setColor(color(0, 0, 0))
+              .setText("jojo")
+                .setAutoClear(false)
+                  .setLabelVisible(false)
+                    .setColorBackground(color(225, 225, 225))
+                      .setLabel("");                    
+                      
+  envelopeLabel = cp5.addTextlabel("label3")
+                    .setText("Envelope")
+                    .setPosition(width/2 + editorWidth/20,height/2-editorHeight/2+editorHeight/20)
+                    .setColorValue(0x000000)
+                    .setFont(createFont("Georgia",20))
+                    ;
+  
+  labelA = cp5.addTextlabel("label4")
+                    .setText("A")
+                    .setPosition(width/2 + editorWidth/20,height/2-editorHeight/2+editorHeight/20 + 15*editorHeight/100)
+                    .setColorValue(0x000000)
+                    .setFont(createFont("Georgia",20))
+                    ;
+                    
+  labelD = cp5.addTextlabel("label5")
+                    .setText("D")
+                    .setPosition(width/2 + editorWidth/20,height/2-editorHeight/2+editorHeight/20 + 30*editorHeight/100)
+                    .setColorValue(0x000000)
+                    .setFont(createFont("Georgia",20))
+                    ;
+ 
+  labelS = cp5.addTextlabel("label6")
+                    .setText("S(Amp)")
+                    .setPosition(width/2 + editorWidth/20,height/2-editorHeight/2+editorHeight/20 + 45*editorHeight/100)
+                    .setColorValue(0x000000)
+                    .setFont(createFont("Georgia",20))
+                    ;
+                    
+  labelR = cp5.addTextlabel("label7")
+                    .setText("R")
+                    .setPosition(width/2 + editorWidth/20,height/2-editorHeight/2+editorHeight/20 + 60*editorHeight/100)
+                    .setColorValue(0x000000)
+                    .setFont(createFont("Georgia",20))
+                    ;
+                    
+                    
   frequencyLabel = cp5.addTextlabel("label")
                     .setText("Frequency")
                     .setPosition(width/2-editorWidth/2 + editorWidth/20,height/2-editorHeight/2+editorHeight/20)
@@ -62,7 +145,7 @@ void setupOscillatorEditor(){
  
   frequencyTextField = cp5.addTextfield("textInput_1")
     .setPosition(width/2-editorWidth/2 + editorWidth/20 + editorWidth/5 ,height/2-editorHeight/2+editorHeight/20)
-      .setSize(editorWidth/5, editorHeight/9)
+      .setSize(editorWidth/5, editorHeight/12)
         .setFont(font)
           .setFocus(true)
             .setColor(color(0, 0, 0))
@@ -74,7 +157,7 @@ void setupOscillatorEditor(){
                 
    amplitudeTextField = cp5.addTextfield("textInput_2")
     .setPosition(width/2-editorWidth/2 + editorWidth/20 + editorWidth/5,height/2-editorHeight/2+editorHeight/5)
-      .setSize(editorWidth/5, editorHeight/9)
+      .setSize(editorWidth/5, editorHeight/12)
         .setFont(font)
           .setFocus(false)
             .setColor(color(0, 0, 0))
@@ -104,6 +187,20 @@ void setupOscillatorEditor(){
      .setValue(0)
        .setPosition(5*width/6,ySegment/2)
          .setSize(3*editorWidth/8,editorHeight/10);
+         
+    envelopeLabel.hide();
+    frequencyLabel.hide();
+    amplitudeLabel.hide();
+    labelA.hide(); 
+    labelD.hide();
+    labelS.hide();
+    labelR.hide();
+    frequencyTextField.hide();
+    amplitudeTextField.hide();
+    textFieldA.hide();
+    textFieldD.hide();
+    textFieldS.hide();
+    textFieldR.hide();
   
 }
 
@@ -116,6 +213,19 @@ public void apply() {
       frequencyTextField.hide();
       amplitudeTextField.hide();
       submitButton.hide();
+      envelopeLabel.hide();
+      frequencyLabel.hide();
+      amplitudeLabel.hide();
+      labelA.hide(); 
+      labelD.hide();
+      labelS.hide();
+      labelR.hide();
+      frequencyTextField.hide();
+      amplitudeTextField.hide();
+      textFieldA.hide();
+      textFieldD.hide();
+      textFieldS.hide();
+      textFieldR.hide();
   }catch (Exception e){
       //TODO handle bad input
       println("Bad input, please write some code into catch exception thing");

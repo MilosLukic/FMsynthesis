@@ -103,6 +103,19 @@ class Cell implements Serializable {
       frequencyTextField.show();
       amplitudeTextField.show();
       submitButton.show();
+      envelopeLabel.show();
+      frequencyLabel.show();
+      amplitudeLabel.show();
+      labelA.show();
+      labelD.show();
+      labelS.show();
+      labelR.show();
+      frequencyTextField.show();
+      amplitudeTextField.show();
+      textFieldA.show();
+      textFieldD.show();
+      textFieldS.show();
+      textFieldR.show();
     }
   }
 
