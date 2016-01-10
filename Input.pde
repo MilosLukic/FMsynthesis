@@ -44,6 +44,7 @@ void keyPressed(){
   for (Note activeNote : activeNotes){
     
     if (activeNote.letter == key){
+      
       activeNote.active=true;
       activeNote.dying=false;
     }

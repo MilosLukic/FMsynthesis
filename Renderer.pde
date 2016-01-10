@@ -41,9 +41,9 @@ class Renderer{
   
   public void drawTitle(){
     fill(0);
-    textSize(35);
+    textSize(40);
     textAlign(CENTER);
-    text("FM Synthesis Board", width/6, ySegment/2);
+    text("FM SYNTHESIS BOARD", width/4, ySegment/2 + 15);
   }
   
   public void drawToolbar(){

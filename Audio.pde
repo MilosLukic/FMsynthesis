@@ -18,7 +18,7 @@ class AudioOut {
     this.x = width;
     this.y = ySegment * HEADER_HEIGHT + ySegment * (ROWS)/2;
     this.offsetX = -25;
-    this.radius = 30;
+    this.radius = 50;
 
 
     try {
@@ -145,7 +145,7 @@ class AudioOut {
       h = map(fft.getBand(i), 0, maxSpec, 2, ySegment);
 
       fill(173, g, 47);
-      rect(i * specScale, ySegment - h, specScale, h);
+      rect(i * specScale, 2*ySegment - h, specScale, h);
     }
 
     // Povprečja
@@ -192,7 +192,7 @@ class AudioOut {
     noFill();
     fill(255);
     textSize(12);
-    text("Out", this.x+this.offsetX, this.y);
+    text("OUT", this.x+this.offsetX, this.y);
 
     if (floatBuf != null) drawFFT();
   }
