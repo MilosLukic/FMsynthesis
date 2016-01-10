@@ -70,8 +70,8 @@ class AudioOut {
             }
           }
           if (activeNote.dying){
-            activeNote.lastAmplitude = envelope.release(activeNote.time, sampleRate, activeNote.lastAmplitude);
-            value += 100*activeNote.lastAmplitude*tempSample;
+            activeNote.lastAmplitude = envelope.release(activeNote.time, sampleRate, activeNote.lastAmplitude)*0.7;
+            value += activeNote.lastAmplitude*tempSample;
             
             if (activeNote.lastAmplitude <= 0f){
               activeNote.active = false;
@@ -80,13 +80,13 @@ class AudioOut {
             }
             
           }else{
-            activeNote.lastAmplitude = envelope.coeff(activeNote.time, sampleRate, activeNote);
-            value += 100*tempSample*activeNote.lastAmplitude;
+            activeNote.lastAmplitude = envelope.coeff(activeNote.time, sampleRate, activeNote)*0.7;
+            value += tempSample*activeNote.lastAmplitude;
           }
           activeNote.time++;
         }
 
-        floatBuf[i] = value;
+        floatBuf[i] = value*100;
         buf[i] = (byte) floatBuf[i];
       }
       source.write(buf, 0, buf.length);
@@ -132,7 +132,7 @@ class AudioOut {
     float g = 0;
     float h = 0;
     float specStep;
-    int specFraction = 3;
+    int specFraction = 1;
 
     float specScale = (float) width / (fft.specSize() / specFraction);
 
