@@ -282,7 +282,7 @@ public void Import() {
   if (!setupFinished) return;
   //selectInput("Select a file to process:", "fileSelected");
   //println(filePath);
-
+  oscillators = new LinkedList<Oscillator>();
   JFileChooser chooser = new JFileChooser();
   chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
   int returnVal = chooser.showOpenDialog(null);
@@ -333,6 +333,7 @@ public void Import() {
           cells[i][j].oscillator.audioOut = audioOut;
           //cells[i][j].oscillator.envelope = readCase.get(c).oscillator.envelope;
         }
+        oscillators.add(cells[i][j].oscillator);
       }
       c++;
     }
