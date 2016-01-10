@@ -254,6 +254,7 @@ class Oscillator implements Serializable {
     else
       this.hasAudioOut = false;
     out.writeBoolean(hasAudioOut);
+    out.writeObject(envelope);
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -266,6 +267,7 @@ class Oscillator implements Serializable {
     pointOutY = in.readFloat();
     container = (Cell)in.readObject();
     hasAudioOut = in.readBoolean();
+    envelope = (Envelope)in.readObject();
   }
 
   public Oscillator(Cell container) {
@@ -284,7 +286,9 @@ class Oscillator implements Serializable {
     return this.type;
   }
 
-  public void setFrequency(int frequency) {
+  public void setFrequency(int frequency, Tone tone) {
+    System.out.println("hohoho");
+        System.out.println(tone);
     int n = tone.getNote((float) frequency);
     System.out.println(n);
     this.frequency = (int) tone.getFrequency(n);
@@ -327,13 +331,29 @@ class Oscillator implements Serializable {
   }
 }
 
-class Envelope {
+class Envelope implements Serializable{
   float attack = 0.01;
   float decay = 5.4;
   boolean decayQ = true;
 
   float release = 0.2;
   float sustainAmplitude = 0.3;  
+
+ private void writeObject(ObjectOutputStream out) throws IOException {
+    out.writeFloat(attack);
+    out.writeFloat(decay);
+    out.writeBoolean(decayQ);
+    out.writeFloat(release);
+    out.writeFloat(sustainAmplitude);
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    attack = in.readFloat();
+    decay = in.readFloat();
+    decayQ = in.readBoolean();
+    release = in.readFloat();
+    sustainAmplitude = in.readFloat();
+  }
 
 
   public float coeff(long sample, int sampleRate, Note activeNote) {

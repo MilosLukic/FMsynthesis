@@ -238,7 +238,9 @@ void setupOscillatorEditor() {
 public void apply() {
   if (!setupFinished) return;
   try {
-    editingOscillator.setFrequency(Integer.parseInt(frequencyTextField.getText()));
+    println(editingOscillator);
+    println(frequencyTextField.getText());
+    editingOscillator.setFrequency(Integer.parseInt(frequencyTextField.getText()), tone);
     editingOscillator.setAmplitude(Float.parseFloat(amplitudeTextField.getText()));
     editingOscillator.envelope.attack = Float.parseFloat(textFieldA.getText());
     editingOscillator.envelope.decay = Float.parseFloat(textFieldD.getText());
@@ -272,6 +274,7 @@ public void apply() {
   catch (Exception e) {
     //TODO handle bad input
     println("Bad input, please write some code into catch exception thing");
+    e.printStackTrace();
   }
 }
 
@@ -286,7 +289,9 @@ public void Import() {
   File selectedFile = null;
   if (returnVal == JFileChooser.APPROVE_OPTION) {
     selectedFile = chooser.getSelectedFile();
-  }
+
+    System.out.println(selectedFile.getAbsolutePath());
+  }else {return;}
 
   List<Cell> readCase = new ArrayList<Cell>();
 
@@ -326,6 +331,7 @@ public void Import() {
         cells[i][j].oscillator.container = cells[i][j];
         if (readCase.get(c).oscillator.hasAudioOut) {
           cells[i][j].oscillator.audioOut = audioOut;
+          //cells[i][j].oscillator.envelope = readCase.get(c).oscillator.envelope;
         }
       }
       c++;
