@@ -1,6 +1,10 @@
 import java.applet.Applet;
 import java.awt.event.*;
 
+import javax.swing.JFileChooser;
+import javax.swing.JTextField;
+
+
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
@@ -33,7 +37,9 @@ int editorWidth;
 int editorHeight;
 public String editingFrequency, editingAmplitude;
 Textfield frequencyTextField, amplitudeTextField;
+Textlabel frequencyLabel, amplitudeLabel;
 Button submitButton, exportButton, importButton;
+DropdownList dropdownSignalType;
 public String filePath;
 public boolean setupFinished = false;
 

@@ -1,14 +1,68 @@
+void customizeDropdown(DropdownList ddl) {
+  // a convenience function to customize a DropdownList
+  ddl.setBackgroundColor(color(190));
+  ddl.setItemHeight(20);
+  ddl.setBarHeight(15);
+
+
+  ddl.addItem("Sine", "Sine");
+  ddl.addItem("Triangle", "Triangle");
+  ddl.addItem("Square", "Square");
+  
+
+  //ddl.scroll(0);
+  ddl.setColorBackground(color(60));
+  ddl.setColorActive(color(255, 128));
+}
+
+void controlEvent(ControlEvent theEvent) {
+  // DropdownList is of type ControlGroup.
+  // A controlEvent will be triggered from inside the ControlGroup class.
+  // therefore you need to check the originator of the Event with
+  // if (theEvent.isGroup())
+  // to avoid an error message thrown by controlP5.
+
+  if (theEvent.isGroup()) {
+    // check if the Event was triggered from a ControlGroup
+    println("event from group : "+theEvent.getGroup().getValue()+" from "+theEvent.getGroup());
+  } 
+  else if (theEvent.isController()) {
+    int indx = (int)(theEvent.getController().getValue());
+    //editingOscillator.type = dropdownSignalType.getItems().get(indx).toString();
+    println("event from controller : "+theEvent.getController().getValue()+" from "+theEvent.getController());
+  }
+}
 
 void setupOscillatorEditor(){
-  editorWidth = width/4;
-  editorHeight = height/4;
+  editorWidth = width/2;
+  editorHeight = height/2;
   PFont font = createFont("arial", 20);
  
   cp5 = new ControlP5(this);
+  
+  dropdownSignalType = cp5.addDropdownList("Signal type")
+          .setPosition(100, 100)
+          ;
+  
+  customizeDropdown(dropdownSignalType);
+  
+  frequencyLabel = cp5.addTextlabel("label")
+                    .setText("Frequency")
+                    .setPosition(width/2-editorWidth/2 + editorWidth/20,height/2-editorHeight/2+editorHeight/20)
+                    .setColorValue(0x000000)
+                    .setFont(createFont("Georgia",20))
+                    ;
+                    
+  amplitudeLabel = cp5.addTextlabel("label2")
+                  .setText("Amplitude")
+                  .setPosition(width/2-editorWidth/2 + editorWidth/20,height/2-editorHeight/2+editorHeight/5)
+                  .setColorValue(0x000000)
+                  .setFont(createFont("Georgia",20))
+                  ;
  
   frequencyTextField = cp5.addTextfield("textInput_1")
-    .setPosition(width/2-editorWidth/3,height/2-editorHeight/3)
-      .setSize(editorWidth/3, editorHeight/6)
+    .setPosition(width/2-editorWidth/2 + editorWidth/20 + editorWidth/5 ,height/2-editorHeight/2+editorHeight/20)
+      .setSize(editorWidth/5, editorHeight/9)
         .setFont(font)
           .setFocus(true)
             .setColor(color(0, 0, 0))
@@ -19,8 +73,8 @@ void setupOscillatorEditor(){
                       .setLabel("");
                 
    amplitudeTextField = cp5.addTextfield("textInput_2")
-    .setPosition(width/2-editorWidth/3,height/2)
-      .setSize(editorWidth/3, editorHeight/6)
+    .setPosition(width/2-editorWidth/2 + editorWidth/20 + editorWidth/5,height/2-editorHeight/2+editorHeight/5)
+      .setSize(editorWidth/5, editorHeight/9)
         .setFont(font)
           .setFocus(false)
             .setColor(color(0, 0, 0))
@@ -36,19 +90,19 @@ void setupOscillatorEditor(){
               
   submitButton = cp5.addButton("apply")
      .setValue(0)
-       .setPosition(width/2,height/2 +editorHeight/4)
+       .setPosition(width/2 - 3*editorWidth/16,height/2 +editorHeight/3)
          .setSize(3*editorWidth/8,editorHeight/10);
   
   submitButton.hide();
   
-    exportButton = cp5.addButton("export2")
+    exportButton = cp5.addButton("Export")
      .setValue(0)
-       .setPosition(4*width/5,height/10 +editorHeight/4)
+       .setPosition(4*width/6,ySegment/2)
          .setSize(3*editorWidth/8,editorHeight/10);
          
-    importButton = cp5.addButton("import2")
+    importButton = cp5.addButton("Import")
      .setValue(0)
-       .setPosition(3*width/4,height/10)
+       .setPosition(5*width/6,ySegment/2)
          .setSize(3*editorWidth/8,editorHeight/10);
   
 }
@@ -69,16 +123,26 @@ public void apply() {
 
 }
 
-public void import2(){
+public void Import(){
   if(!setupFinished) return;
   //selectInput("Select a file to process:", "fileSelected");
   //println(filePath);
+  
+  JFileChooser chooser = new JFileChooser();
+  chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+  int returnVal = chooser.showOpenDialog(null);
+  File selectedFile = null;
+  if (returnVal == JFileChooser.APPROVE_OPTION) {
+    selectedFile = chooser.getSelectedFile();
+    System.out.println(selectedFile.getAbsolutePath());
+  }
+  
   List<Cell> readCase = new ArrayList<Cell>();
 
   ObjectInputStream objectinputstream = null;
   FileInputStream streamIn;
   try {
-    streamIn = new FileInputStream("C:\\processing-3.0.1\\address.ser");
+    streamIn = new FileInputStream(selectedFile.getAbsolutePath());
     objectinputstream = new ObjectInputStream(streamIn);
      
 
@@ -103,6 +167,7 @@ public void import2(){
       if(!(readCase.get(c).isEmpty())){
         cells[i][j].empty = false;
         cells[i][j].oscillator = (readCase.get(c).oscillator);
+        cells[i][j].oscillator.container = cells[i][j];
         if(readCase.get(c).oscillator.hasAudioOut){
           cells[i][j].oscillator.audioOut = audioOut;
         }
@@ -115,38 +180,29 @@ public void import2(){
    
 }
 
-boolean fileSelected(File selection) {
+
+
+
+
+public void Export(){
+  if(!setupFinished) return;
+  
+  selectOutput("Select a file to write to:", "fileSelected");
+
+
+
+}
+
+void fileSelected(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
-    return false;
-    
   } else {
-    filePath = selection.getAbsolutePath();
-    println(filePath);
-    return true;
-  }
-}
-
-public void export() {
-  if(!setupFinished) return;
-  String csvCells = "";
-  String csvOscillators = "";
-  for (int i = 0; i<ROWS; i++){
-    for(int j = 0; j<COLUMNS; j++){
-      Cell c = cells[i][j];
-      String curr = "";
-    }
-  }
-}
-
-public void export2(){
-  if(!setupFinished) return;
-  List<Cell> cellList = new ArrayList<Cell>();
+      List<Cell> cellList = new ArrayList<Cell>();
   for(int i=0;i<ROWS;i++)
     for(int j=0;j<COLUMNS;j++)
         cellList.add(cells[i][j]);
   try{
-    FileOutputStream fout = new FileOutputStream("address.ser");
+    FileOutputStream fout = new FileOutputStream(selection.getAbsolutePath());
     ObjectOutputStream oos = new ObjectOutputStream(fout);
     oos.writeObject(cellList);
     fout.close();
@@ -155,5 +211,6 @@ public void export2(){
   }catch (Exception e){
     e.printStackTrace();
   }
-
-}
+    println("User selected " + selection.getAbsolutePath());
+  }
+}public void export2(){}
