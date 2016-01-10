@@ -106,7 +106,10 @@ class Cell implements Serializable {
       textFieldR.setText(Float.toString(this.oscillator.envelope.release));
       dropdownSignalType.setStringValue(this.oscillator.type);
       dropdownSignalType.setLabel(this.oscillator.type);
-      System.out.println(dropdownSignalType.getStringValue());
+      if (this.oscillator.envelope.decayQ)
+        checkboxQ.deactivate(0);
+      else
+        checkboxQ.activate(0);
       frequencyTextField.show();
       amplitudeTextField.show();
       submitButton.show();
@@ -126,6 +129,8 @@ class Cell implements Serializable {
       dropdownSignalType.show();
       oscillatorLabel.show();
       signalTypeLabel.show();
+      checkboxQ.show();
+      labelQ.show();
     }
   }
 
@@ -207,16 +212,19 @@ class Cell implements Serializable {
     textSize(10);
     fill(200);
     stroke(0);
-    fill(200, 200, 200);
+    fill(100, 100, 100);
     rect(referenceX, referenceY, segmentX*oscillatorSizeRelative, segmentY, 20);
-    fill(255, 5, 5);
+    fill(150, 24, 24);
     arc(referenceX, referenceY + segmentY*0.5, connectorSize, connectorSize, -HALF_PI, HALF_PI);
     arc(referenceX + segmentX*oscillatorSizeRelative, referenceY + segmentY*0.5, connectorSize, connectorSize, HALF_PI, PI+HALF_PI);
 
+    textSize(13);
+    fill(255, 255, 255);
     text("f", referenceX+segmentX*0.1, referenceY+segmentY*0.3); 
-    text(this.oscillator.frequency, referenceX+segmentX*0.2, referenceY+segmentY*0.3); 
-    text("A", referenceX+segmentX*0.1, referenceY+segmentY*0.7);
-    text(this.oscillator.amplitude, referenceX+segmentX*0.2, referenceY+segmentY*0.7);
+    text(this.oscillator.frequency, referenceX+segmentX*0.24, referenceY+segmentY*0.3); 
+    text("A", referenceX+segmentX*0.1, referenceY+segmentY*0.6);
+    text(this.oscillator.amplitude, referenceX+segmentX*0.24, referenceY+segmentY*0.6);
+    text(this.oscillator.type, referenceX+segmentX*0.24, referenceY+segmentY*0.9);
   }
 }
 
@@ -321,7 +329,7 @@ class Oscillator implements Serializable {
 
 class Envelope {
   float attack = 0.01;
-  float decay = 1.4;
+  float decay = 5.4;
   boolean decayQ = true;
 
   float release = 0.2;

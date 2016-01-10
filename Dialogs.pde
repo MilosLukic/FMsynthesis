@@ -31,7 +31,21 @@ void setupOscillatorEditor() {
   PFont font = createFont("arial", 20);
 
   cp5 = new ControlP5(this);
-
+  
+  
+  checkboxQ = cp5.addCheckBox("Q")
+                .setPosition(width/2 + editorWidth/20 + editorWidth/3 + 10, height/2-editorHeight/2+editorHeight/20 + 30*editorHeight/100)
+                .setColorForeground(color(120))
+                .setColorActive(color(255))
+                .setColorLabel(color(255))
+                .setSize(editorWidth/20, editorHeight/12)
+                .setItemsPerRow(3)
+                .setSpacingColumn(30)
+                .setSpacingRow(20)
+                .addItem("", 0)
+                .setLabel("")
+                ;
+  
   dropdownSignalType = cp5.addDropdownList("Signal type")
     .setPosition(width/2-editorWidth/2 + editorWidth/20 + editorWidth/5, height/2-editorHeight/2+editorHeight/20 + 45*editorHeight/100)
     .setOpen(false);
@@ -52,7 +66,7 @@ void setupOscillatorEditor() {
 
   textFieldD = cp5.addTextfield("textInput_11")
     .setPosition(width/2 + editorWidth/20 + editorWidth/5, height/2-editorHeight/2+editorHeight/20 + 30*editorHeight/100)
-    .setSize(editorWidth/5, editorHeight/12)
+    .setSize(editorWidth/12, editorHeight/12)
     .setFont(font)
     .setFocus(true)
     .setColor(color(0, 0, 0))
@@ -112,6 +126,13 @@ void setupOscillatorEditor() {
     .setColorValue(0x000000)
     .setFont(createFont("Georgia", 20))
     ;
+    
+  labelQ = cp5.addTextlabel("label33")
+    .setText("Q")
+    .setPosition(width/2 + editorWidth/20 + editorWidth/5 + editorWidth/12 + 10, height/2-editorHeight/2+editorHeight/20 + 30*editorHeight/100)
+    .setColorValue(0x000000)
+    .setFont(createFont("Georgia", 20))
+    ;
 
   labelS = cp5.addTextlabel("label6")
     .setText("S(Amp)")
@@ -142,7 +163,7 @@ void setupOscillatorEditor() {
     .setFont(createFont("Georgia", 20))
     ;
 
-  signalTypeLabel = cp5.addTextlabel("label2")
+  signalTypeLabel = cp5.addTextlabel("label21")
     .setText("Signal type")
     .setPosition(width/2-editorWidth/2 + editorWidth/20, height/2-editorHeight/2+editorHeight/20 + 45*editorHeight/100)
     .setColorValue(0x000000)
@@ -210,6 +231,8 @@ void setupOscillatorEditor() {
   dropdownSignalType.hide();
   oscillatorLabel.hide();
   signalTypeLabel.hide();
+  checkboxQ.hide();
+  labelQ.hide();
 }
 
 public void apply() {
@@ -222,8 +245,7 @@ public void apply() {
     editingOscillator.envelope.release = Float.parseFloat(textFieldR.getText());
     editingOscillator.envelope.sustainAmplitude = Float.parseFloat(textFieldS.getText());
     editingOscillator.type = dropdownSignalType.getStringValue();
-          System.out.println(dropdownSignalType.getStringValue());
-    //editingOscillator.envelope.decayQ = Float.parseFloat(textFieldA.getText());
+    editingOscillator.envelope.decayQ = !checkboxQ.getState(0);
     showOscillatorEditor = false;
     frequencyTextField.hide();
     amplitudeTextField.hide();
@@ -244,6 +266,8 @@ public void apply() {
     dropdownSignalType.hide();
     oscillatorLabel.hide();
     signalTypeLabel.hide();
+    checkboxQ.hide();
+    labelQ.hide();
   }
   catch (Exception e) {
     //TODO handle bad input
@@ -262,7 +286,6 @@ public void Import() {
   File selectedFile = null;
   if (returnVal == JFileChooser.APPROVE_OPTION) {
     selectedFile = chooser.getSelectedFile();
-    System.out.println(selectedFile.getAbsolutePath());
   }
 
   List<Cell> readCase = new ArrayList<Cell>();
@@ -280,7 +303,6 @@ public void Import() {
     //recordList.add(readCase);
   } 
   catch (Exception e) {
-    println("NEMA NISTA");
     e.printStackTrace();
   }
   finally {
