@@ -40,9 +40,21 @@ void setupOscillatorEditor(){
          .setSize(3*editorWidth/8,editorHeight/10);
   
   submitButton.hide();
+  
+    exportButton = cp5.addButton("export2")
+     .setValue(0)
+       .setPosition(4*width/5,height/10 +editorHeight/4)
+         .setSize(3*editorWidth/8,editorHeight/10);
+         
+    importButton = cp5.addButton("import2")
+     .setValue(0)
+       .setPosition(3*width/4,height/10)
+         .setSize(3*editorWidth/8,editorHeight/10);
+  
 }
 
 public void apply() {
+  if(!setupFinished) return;
   try{
       editingOscillator.setFrequency(Integer.parseInt(frequencyTextField.getText()));
       editingOscillator.setAmplitude(Float.parseFloat(amplitudeTextField.getText()));
@@ -53,6 +65,95 @@ public void apply() {
   }catch (Exception e){
       //TODO handle bad input
       println("Bad input, please write some code into catch exception thing");
+  }
+
+}
+
+public void import2(){
+  if(!setupFinished) return;
+  //selectInput("Select a file to process:", "fileSelected");
+  //println(filePath);
+  List<Cell> readCase = new ArrayList<Cell>();
+
+  ObjectInputStream objectinputstream = null;
+  FileInputStream streamIn;
+  try {
+    streamIn = new FileInputStream("C:\\processing-3.0.1\\address.ser");
+    objectinputstream = new ObjectInputStream(streamIn);
+     
+
+    
+    readCase = (List<Cell>) objectinputstream.readObject();
+    //List<Cell> recordList = new ArrayList<Cell>();
+    //recordList.add(readCase);
+
+   } catch (Exception e) {
+        println("NEMA NISTA");
+        e.printStackTrace();
+   }finally {
+        if(objectinputstream != null){
+            try{objectinputstream .close();}catch (Exception e){println("NAPAAAKAAA");}
+         } 
+   }
+  
+  initializeCells();
+  int c = 0; 
+  for (int i = 0; i<cells.length; i++){
+    for (int j = 0; j<cells[i].length; j++){
+      if(!(readCase.get(c).isEmpty())){
+        cells[i][j].empty = false;
+        cells[i][j].oscillator = (readCase.get(c).oscillator);
+        if(readCase.get(c).oscillator.hasAudioOut){
+          cells[i][j].oscillator.audioOut = audioOut;
+        }
+        
+      }
+      c++;
+      
+    }
+  }
+   
+}
+
+boolean fileSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+    return false;
+    
+  } else {
+    filePath = selection.getAbsolutePath();
+    println(filePath);
+    return true;
+  }
+}
+
+public void export() {
+  if(!setupFinished) return;
+  String csvCells = "";
+  String csvOscillators = "";
+  for (int i = 0; i<ROWS; i++){
+    for(int j = 0; j<COLUMNS; j++){
+      Cell c = cells[i][j];
+      String curr = "";
+    }
+  }
+}
+
+public void export2(){
+  if(!setupFinished) return;
+  List<Cell> cellList = new ArrayList<Cell>();
+  for(int i=0;i<ROWS;i++)
+    for(int j=0;j<COLUMNS;j++)
+        cellList.add(cells[i][j]);
+  try{
+    FileOutputStream fout = new FileOutputStream("address.ser");
+    ObjectOutputStream oos = new ObjectOutputStream(fout);
+    oos.writeObject(cellList);
+    fout.close();
+    oos.close();
+    println("MISLM DA SM NAREDU FAJL SE KR USPESNO");
+  }catch (Exception e){
+    e.printStackTrace();
   }
 
 }

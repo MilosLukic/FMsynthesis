@@ -1,6 +1,13 @@
 import java.applet.Applet;
 import java.awt.event.*;
 
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -26,7 +33,10 @@ int editorWidth;
 int editorHeight;
 public String editingFrequency, editingAmplitude;
 Textfield frequencyTextField, amplitudeTextField;
-Button submitButton;
+Button submitButton, exportButton, importButton;
+public String filePath;
+public boolean setupFinished = false;
+
 Renderer renderer;
 Tone tone;
 
@@ -47,6 +57,7 @@ void setup(){
   audioOut = new AudioOut();
   renderer = new Renderer();
   setupOscillatorEditor();
+  setupFinished = true;
 
 }
 

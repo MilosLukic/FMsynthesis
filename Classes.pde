@@ -1,4 +1,4 @@
-class Cell{
+class Cell implements Serializable{
   boolean empty;
   int leftTopX;
   int leftTopY;
@@ -22,6 +22,37 @@ class Cell{
     pointInY = leftTopY + segmentY/2;
     pointOutX = leftTopX + segmentX * oscillatorSizeRelative;
     pointOutY = leftTopY + segmentY/2;
+  }
+  
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.writeBoolean(empty);
+    out.writeInt(leftTopX);
+    out.writeInt(leftTopY);
+    out.writeInt(segmentX);
+    out.writeInt(segmentY);
+    out.writeObject(oscillator);
+    out.writeFloat(oscillatorSizeRelative);
+    out.writeFloat(pointInX);
+    out.writeFloat(pointInY);
+    out.writeFloat(pointOutX);
+    out.writeFloat(pointOutY);
+    out.writeInt(connectorSize);
+ 
+  }
+  
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    empty = in.readBoolean();
+    leftTopX = in.readInt();
+    leftTopY = in.readInt();
+    segmentX = in.readInt();
+    segmentY = in.readInt();
+    oscillator = (Oscillator)in.readObject();
+    oscillatorSizeRelative = in.readFloat();
+    pointInX = in.readFloat();
+    pointInY = in.readFloat();
+    pointOutX = in.readFloat();
+    pointOutY = in.readFloat();
+    connectorSize = in.readInt(); 
   }
   
   public void initOscillator(){
@@ -168,9 +199,14 @@ class Cell{
     text(this.oscillator.amplitude, referenceX+segmentX*0.2, referenceY+segmentY*0.7); 
     
   }
+  
+
+  
+  
+  
 }
 
-class Oscillator{
+class Oscillator implements Serializable{
   boolean active = true;
   int frequency = 440;
   float amplitude = 1f;
@@ -179,6 +215,37 @@ class Oscillator{
   AudioOut audioOut = null;
   float pointOutX, pointOutY;
   Cell container = null;
+  boolean hasAudioOut;
+  
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.writeBoolean(active);
+    out.writeInt(frequency);
+    out.writeFloat(amplitude);
+    out.writeUTF(type);
+    out.writeObject(outOscillator);
+    out.writeFloat(pointOutX);
+    out.writeFloat(pointOutY);
+    out.writeObject(container);
+    if(this.audioOut != null)
+      this.hasAudioOut = true;
+    else
+      this.hasAudioOut = false;
+    out.writeBoolean(hasAudioOut);
+ 
+  }
+  
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    active = in.readBoolean();
+    frequency = in.readInt();
+    amplitude = in.readFloat();
+    type = in.readUTF();
+    outOscillator = (Oscillator)in.readObject();
+    pointOutX = in.readFloat();
+    pointOutY = in.readFloat();
+    container = (Cell)in.readObject();
+    hasAudioOut = in.readBoolean();
+
+  }
   
   public Oscillator(Cell container){
     this.container = container;
@@ -225,6 +292,8 @@ class Oscillator{
    public void setOutOscillator(Oscillator outOscillator){
      this.outOscillator = outOscillator;
    }
+   
+
 
 }
 
