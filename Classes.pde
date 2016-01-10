@@ -208,6 +208,7 @@ class Cell implements Serializable{
 
 class Oscillator implements Serializable{
   boolean active = true;
+  boolean hasAudioOut;
   int frequency = 440;
   float amplitude = 1f;
   String type = "SINE";
@@ -215,7 +216,7 @@ class Oscillator implements Serializable{
   AudioOut audioOut = null;
   float pointOutX, pointOutY;
   Cell container = null;
-  boolean hasAudioOut;
+  Envelope envelope;
   
   private void writeObject(ObjectOutputStream out) throws IOException {
     out.writeBoolean(active);
@@ -249,6 +250,7 @@ class Oscillator implements Serializable{
   
   public Oscillator(Cell container){
     this.container = container;
+    this.envelope = new Envelope();
   }
   
   public int getFrequency(){
@@ -298,14 +300,18 @@ class Oscillator implements Serializable{
 }
 
 class Envelope{
-  float attack = 0.1;
-  float decay = 0.4;
+  float attack = 0.01;
+  float decay = 1.4;
+  boolean decayQ = true;
+  
   float release = 0.2;
-  float sustainAmplitude = 0.6;  
+  float sustainAmplitude = 0.3;  
+  
   
   public float coeff(long sample, int sampleRate, Note activeNote){
     float lastAmplitude = 0.0;
     float time = sample/(float)sampleRate;
+    
     if (time < attack){
       lastAmplitude = time/attack;
       if (activeNote.lastAmplitude > lastAmplitude){
@@ -314,7 +320,10 @@ class Envelope{
     }else if( time - attack < decay){
       float relativeTime = time - attack;
       float share = relativeTime / decay;
-      lastAmplitude =  1 - (1-sustainAmplitude) * share;
+      if (decayQ)
+        lastAmplitude = (float) 1 - (1-sustainAmplitude) * (float)Math.sqrt(share);
+       else
+        lastAmplitude = (float) 1 - (1-sustainAmplitude) * share;
     }else{
       lastAmplitude =  sustainAmplitude;
     }

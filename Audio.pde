@@ -11,7 +11,6 @@ class AudioOut {
   FFT fft;
   byte[] buf;
   float[] floatBuf;
-  Envelope envelope;
   SourceDataLine source;
   AudioFormat af;
 
@@ -26,7 +25,6 @@ class AudioOut {
       af = new AudioFormat((float) sampleRate, 8, 1, true, true);
       DataLine.Info info = new DataLine.Info(SourceDataLine.class, af);
       source = (SourceDataLine) AudioSystem.getLine(info);
-      envelope = new Envelope();
       buf = new byte[512]; 
       floatBuf = new float[512];
       source.open(af, buf.length);
@@ -70,19 +68,14 @@ class AudioOut {
             }
           }
           if (activeNote.dying){
-            activeNote.lastAmplitude = envelope.release(activeNote.time, sampleRate, activeNote.lastAmplitude)*0.7;
-            value += activeNote.lastAmplitude*tempSample;
-            
             if (activeNote.lastAmplitude <= 0f){
               activeNote.active = false;
               activeNote.dying = false;
               activeNote.time = 0;
             }
             
-          }else{
-            activeNote.lastAmplitude = envelope.coeff(activeNote.time, sampleRate, activeNote)*0.7;
-            value += tempSample*activeNote.lastAmplitude;
           }
+          value += tempSample;
           activeNote.time++;
         }
 
@@ -113,7 +106,14 @@ class AudioOut {
     if (oscillator.audioOut == null){
       frequency = oscillator.frequency * frequency / oscillator.outOscillator.frequency;
     }
-    return (float) oscillator.amplitude * Math.sin( 2 * Math.PI * frequency * time / this.sampleRate + value);
+    
+    if (n.dying){
+      n.lastAmplitude = oscillator.envelope.release(n.time, sampleRate, n.lastAmplitude);
+    }else{
+      n.lastAmplitude = oscillator.envelope.coeff(n.time, sampleRate, n)*0.7;
+    }
+    return (float) oscillator.amplitude * n.lastAmplitude * Math.sin( 2 * Math.PI * frequency * time / this.sampleRate + value);
+      
   }
 
   public void manageInput() {
