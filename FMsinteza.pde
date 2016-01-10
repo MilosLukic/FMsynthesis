@@ -37,7 +37,7 @@ int editorWidth;
 int editorHeight;
 public String editingFrequency, editingAmplitude;
 Textfield frequencyTextField, amplitudeTextField, textFieldA, textFieldD, textFieldS, textFieldR;
-Textlabel frequencyLabel, amplitudeLabel, envelopeLabel, labelA, labelD, labelS, labelR;
+Textlabel frequencyLabel, amplitudeLabel, envelopeLabel, labelA, labelD, labelS, labelR, oscillatorLabel, signalTypeLabel;
 Button submitButton, exportButton, importButton;
 DropdownList dropdownSignalType;
 public String filePath;

@@ -100,6 +100,11 @@ class Cell implements Serializable {
       showOscillatorEditor = true;
       frequencyTextField.setText(Integer.toString(this.oscillator.frequency));
       amplitudeTextField.setText(Float.toString(this.oscillator.amplitude));
+      textFieldA.setText(Float.toString(this.oscillator.envelope.attack));
+      textFieldD.setText(Float.toString(this.oscillator.envelope.decay));
+      textFieldS.setText(Float.toString(this.oscillator.envelope.sustainAmplitude));
+      textFieldR.setText(Float.toString(this.oscillator.envelope.release));
+      dropdownSignalType.setStringValue(this.oscillator.type);
       frequencyTextField.show();
       amplitudeTextField.show();
       submitButton.show();
@@ -116,6 +121,9 @@ class Cell implements Serializable {
       textFieldD.show();
       textFieldS.show();
       textFieldR.show();
+      dropdownSignalType.show();
+      oscillatorLabel.show();
+      signalTypeLabel.show();
     }
   }
 
