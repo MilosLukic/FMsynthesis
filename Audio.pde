@@ -5,7 +5,7 @@ class AudioOut {
   float y;
   float offsetX;
   float radius;
-  int sampleRate = 12050;
+  int sampleRate = 16000;
   boolean playing = false;
   float maxSpec = 0;
   FFT fft;
@@ -108,15 +108,16 @@ class AudioOut {
     }else
       frequency = (int) tone.getFrequency(n.number);
       
-    if (oscillator.audioOut == null){
-      frequency = oscillator.frequency * frequency / oscillator.outOscillator.frequency;
-    }
-    
     if (n.dying){
       n.lastAmplitude = oscillator.envelope.release(n.time, sampleRate, n.lastAmplitude);
     }else{
       n.lastAmplitude = oscillator.envelope.coeff(n.time, sampleRate, n)*0.7;
     }
+    /* Uncomment for frequency change
+    if (oscillator.audioOut == null){
+      frequency = oscillator.frequency * frequency / oscillator.outOscillator.frequency;
+      return (float) oscillator.amplitude * oscillator.calculateSample( n.lastAmplitude * frequency, time, sampleRate, value);
+    } */
     return (float) oscillator.amplitude * n.lastAmplitude * oscillator.calculateSample(frequency, time, sampleRate, value);
       
   }
@@ -150,7 +151,7 @@ class AudioOut {
       h = map(fft.getBand(i), 0, maxSpec, 2, ySegment);
 
       fill(173, g, 47);
-      rect(i * specScale, 2*ySegment - h, specScale, h);
+      rect(i * (specScale), 2*ySegment - h, specScale, h);
     }
 
     // Povprečja

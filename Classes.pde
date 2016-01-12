@@ -332,12 +332,12 @@ class Oscillator implements Serializable {
 }
 
 class Envelope implements Serializable{
-  float attack = 0.01;
-  float decay = 5.4;
+  float attack = 0;
+  float decay = 0;
   boolean decayQ = true;
 
   float release = 0.2;
-  float sustainAmplitude = 0.3;  
+  float sustainAmplitude = 1;  
 
  private void writeObject(ObjectOutputStream out) throws IOException {
     out.writeFloat(attack);
@@ -360,12 +360,13 @@ class Envelope implements Serializable{
     float lastAmplitude = 0.0;
     float time = sample/(float)sampleRate;
 
-    if (time < attack) {
+    if(time <= 1 && attack == 0f){
+      lastAmplitude = 1.0;
+    }
+    else if (time < attack) {
       lastAmplitude = time/attack;
-      if (activeNote.lastAmplitude > lastAmplitude) {
-        activeNote.time = (long) activeNote.lastAmplitude*sampleRate;
-      }
-    } else if ( time - attack < decay) {
+
+    }else if ( time - attack < decay) {
       float relativeTime = time - attack;
       float share = relativeTime / decay;
       if (decayQ)
